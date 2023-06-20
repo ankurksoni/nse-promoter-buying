@@ -41,14 +41,14 @@ async function execute() {
     const firstCopyData = data.filter((obj) => personCategory.includes(obj.personCategory) && MODE_OF_ACQUISITION.includes(obj.acqMode));
     const secondCopyData = [];
     for (let element of firstCopyData) {
-        const { symbol, secAcq, secVal } = element;
+        const { symbol, secAcq, secVal, acqfromDt, acqtoDt } = element;
         let tempObj;
         if ('Market Sale' === element.acqMode) {
             const negativeSecAcq = secAcq * -1;
             const negativeSecVal = secVal * -1;
-            tempObj = { symbol, secAcq: negativeSecAcq, secVal: negativeSecVal };
+            tempObj = { symbol, secAcq: negativeSecAcq, secVal: negativeSecVal, acqfromDt, acqtoDt };
         } else {
-            tempObj = { symbol, secAcq, secVal };
+            tempObj = { symbol, secAcq, secVal, acqfromDt, acqtoDt };
         }
         secondCopyData.push(tempObj);
     }
@@ -58,7 +58,7 @@ async function execute() {
         if (!thirdCopyData[obj.symbol]) {
             thirdCopyData[obj.symbol] = [];
         }
-        thirdCopyData[obj.symbol].push({ acq: obj.secAcq, val: obj.secVal });
+        thirdCopyData[obj.symbol].push({ acq: obj.secAcq, val: obj.secVal, acquisitionFromDate: obj.acqfromDt, acquisitionToDate: obj.acqtoDt });
     }
 
     const fourthCopyData = [];
@@ -90,7 +90,7 @@ async function execute() {
             tempArr.push({ ...obj, bought });
         });
         console.log('--------------------------------------');
-        console.log(`${SYMBOL} : CMP ${rateCopy[SYMBOL]}`);
+        console.log(`SYMBOL => ${SYMBOL}, CMP => ${rateCopy[SYMBOL]}`);
         console.table(tempArr);
     };
 
