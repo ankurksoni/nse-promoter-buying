@@ -1,0 +1,19 @@
+{
+  "name": "nse-promoter-buying",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/ankurksoni/nse-promoter-buying.git",
+  "author": "ankurksoni <ankursoni.leonardo@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "async-get-file": "^1.0.4",
+    "axios": "^0.21.1",
+    "csvtojson": "^2.0.10",
+    "form-data": "^4.0.0",
+    "https": "^1.0.0",
+    "indian-number-format": "^1.0.4",
+    "jszip": "^3.10.1",
+    "moment": "^2.29.1",
+    "papaparse": "^5.3.0"
+  }
+}
