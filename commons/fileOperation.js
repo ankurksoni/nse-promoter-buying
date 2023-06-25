@@ -1,16 +1,24 @@
 const get = require("async-get-file");
 const jszip = require("jszip");
 const fs = require('fs');
-const date = new Date();
-const DAY = date.getDate();
-const YEAR = date.getFullYear();
-const MONTH = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
-const fileName = `cm${DAY > 2 ? DAY - 1 : DAY}${MONTH}${YEAR}bhav.csv.zip`;
+const moment = require('moment');
+
+const SUN = 0, SAT = 6;
+
+const date = moment();
+let DAY, YEAR, MONTH;
+const numDay = date.day();
+date.subtract((SUN === numDay) ? 2 : (SAT === numDay ? 1 : 0), 'day');
+DAY = date.format('DD');
+YEAR = date.year();
+MONTH = date.format('MMM').toUpperCase();
+
+const fileName = `cm${DAY}${MONTH}${YEAR}bhav.csv.zip`;
 
 const URL = `https://archives.nseindia.com/content/historical/EQUITIES/${YEAR}/${MONTH}/${fileName}`;
 
 async function download() {
-    console.log(URL);
+    console.log(`URL: `, URL);
     try {
         await get(URL, {});
         const fileContent = fs.readFileSync(fileName);

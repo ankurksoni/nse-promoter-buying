@@ -1,40 +1,22 @@
-const axios = require('axios');
-
 const { download } = require('./commons/fileOperation');
-const { getURL, readCSV, fileExists, removeCSVFiles } = require('./commons/utility.js');
+const { readCSV, removeCSVFiles, populateData, validateIfFileExists, sleep } = require('./commons/utility.js');
 const personCategory = ['Promoter', 'Promoter Group'];
 const MODE_OF_ACQUISITION = ['Market Purchase', 'Market Sale'];
 const rateCopy = {}; // bhav copy
 
 async function execute() {
     await removeCSVFiles();
-
+    await sleep();
     const fileName = await download();
+    await sleep();
+    await validateIfFileExists(fileName);
 
-    const isFileExists = await fileExists(fileName);
-    if (!isFileExists) {
-        console.log('The file bhavcopy.csv does not exist.');
-        process.exit(1);
-    }
+    const CSVData = await readCSV();
+    for (let obj of CSVData) {
+        if ('EQ' === obj.SERIES) rateCopy[obj.SYMBOL] = Math.floor(parseFloat(obj.CLOSE));
+    };
 
-    const x = await readCSV();
-    x.forEach((obj) => {
-        if (obj.SERIES === `EQ`)
-            rateCopy[obj.SYMBOL] = Math.floor(parseFloat(obj.CLOSE));
-    });
-
-    let data;
-    try {
-        const url = getURL();
-        const response = await axios.get(url, { withCredentials: true });
-        data = response.data.data;
-    } catch (error) {
-        console.error(`Exception while triggering API: ${JSON.stringify(error)}`);
-    }
-    if (!data) {
-        console.error('No data fetched from API request.');
-        return;
-    }
+    const data = await populateData();
 
     delete data.acqNameList;
     // filter only market purchase AND Promoter group AND Promoter
