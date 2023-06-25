@@ -3,6 +3,7 @@ const promises = require('fs/promises');
 const moment = require('moment');
 const papa = require('papaparse');
 const { exec } = require("child_process");
+const execFile = require('child_process').execFile;
 const { fileName } = require('./fileOperation');
 let axios;
 const duration = process.argv[2] || '1M';
@@ -61,16 +62,10 @@ async function fileExists(path) {
 
 async function removeCSVFiles() {
     return new Promise((resolve, reject) => {
-        exec(`rm -rf *csv*`, (error, stdout, stderr) => {
+        execFile('/usr/bin/rm', ['-rf', '*csv*'], (error, output) => {
             if (error) {
                 console.log(`error: ${error.message}`);
                 reject(error);
-                return;
-            }
-            if (stderr) {
-                console.log(`stderr: ${stderr}`);
-                reject(stderr);
-                return;
             } else {
                 console.log(`Removed all CSV files!`);
                 resolve(1);
@@ -156,7 +151,6 @@ function getFourthCopy(thirdCopyData) {
         if (!CURRENT_PRICE) continue;
         const DIFF = (((CURRENT_PRICE - PROMOTER_BUYING_PRICE) / PROMOTER_BUYING_PRICE) * 100).toFixed(2) + '%'
         const WORTH = (CURRENT_PRICE < PROMOTER_BUYING_PRICE) ? 'STRONG BUY' : 'BUY';
-        // const TARGET1 = PROMOTER_BUYING_PRICE + Math.floor(PROMOTER_BUYING_PRICE * 0.6);
         fourthCopyData.push({ SYMBOL, PROMOTER_BUYING_PRICE, CURRENT_PRICE, DIFF, WORTH, ACQ, VAL, VAL_SUM });
     }
     console.log(`fourthCopyData: `, fourthCopyData);

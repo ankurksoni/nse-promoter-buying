@@ -8,7 +8,7 @@ const SUN = 0, SAT = 6;
 const date = moment();
 let DAY, YEAR, MONTH;
 const numDay = date.day();
-date.subtract((SUN === numDay) ? 2 : (SAT === numDay ? 1 : 0), 'day');
+date.subtract(isSunday() ? 2 : processSaturday(), 'day');
 DAY = date.format('DD');
 YEAR = date.year();
 MONTH = date.format('MMM').toUpperCase();
@@ -16,6 +16,18 @@ MONTH = date.format('MMM').toUpperCase();
 const fileName = `cm${DAY}${MONTH}${YEAR}bhav.csv.zip`;
 
 const URL = `https://archives.nseindia.com/content/historical/EQUITIES/${YEAR}/${MONTH}/${fileName}`;
+
+function isSunday() {
+    return SUN === numDay;
+}
+
+function isSaturday() {
+    return SAT === numDay;
+}
+
+function processSaturday() {
+    return (isSaturday() ? 1 : 0);
+}
 
 async function download() {
     console.log(`URL: `, URL);

@@ -22,12 +22,12 @@ async function execute() {
 
     delete data.acqNameList;
     // filter only market purchase AND Promoter group AND Promoter
-    const firstCopyData = data.filter((obj) => personCategory.includes(obj.personCategory) && MODE_OF_ACQUISITION.includes(obj.acqMode));;
+    const firstCopyData = data.filter((obj) => personCategory.includes(obj.personCategory) && MODE_OF_ACQUISITION.includes(obj.acqMode));
     const secondCopyData = getSecondCopy(firstCopyData);
     const thirdCopyData = getThirdCopy(secondCopyData)
     const fifthCopyData = getFourthCopy(thirdCopyData);
 
-    const WORTH_SYMBOLS = fifthCopyData.map(obj => obj.SYMBOL).sort();
+    const WORTH_SYMBOLS = fifthCopyData.map(obj => obj.SYMBOL).sort(customSort);
     for (let SYMBOL of WORTH_SYMBOLS) {
         const arr = thirdCopyData[SYMBOL];
         const tempArr = [];
@@ -40,8 +40,11 @@ async function execute() {
         console.table(tempArr);
     };
 
-    const sixthCopyData = fifthCopyData.sort(customSort);
+    const sixthCopyData = sort(fifthCopyData);
     console.table(sixthCopyData);
 }
 
+function sort(fifthCopyData) {
+    return fifthCopyData.sort(customSort);
+}
 execute();
