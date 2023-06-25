@@ -7,6 +7,8 @@ const { fileName } = require('./fileOperation');
 let axios;
 const duration = process.argv[2] || '1M';
 
+const rateCopy = {}; // bhav copy
+
 console.log(`Duration: ${duration}`);
 
 function getURL() {
@@ -91,7 +93,6 @@ async function populateData() {
         const url = getURL();
         axios = require('axios');
         const response = await axios.get(url, { withCredentials: true });
-        console.log(`response.data: `, response.data);
         data = response.data.data;
     } catch (error) {
         console.error(`Exception while triggering API: ${JSON.stringify(error)}`);
@@ -110,7 +111,60 @@ async function sleep() {
     });
 }
 
+function customSort(a, b) {
+    return b.VAL - a.VAL
+};
+
+function getSecondCopy(firstCopyData) {
+    const secondCopyData = [];
+    for (let element of firstCopyData) {
+        const { symbol, secAcq, secVal, acqfromDt, acqtoDt } = element;
+        let tempObj;
+        if ('Market Sale' === element.acqMode) {
+            const negativeSecAcq = secAcq * -1;
+            const negativeSecVal = secVal * -1;
+            tempObj = { symbol, secAcq: negativeSecAcq, secVal: negativeSecVal, acqfromDt, acqtoDt };
+        } else {
+            tempObj = { symbol, secAcq, secVal, acqfromDt, acqtoDt };
+        }
+        secondCopyData.push(tempObj);
+    }
+    return secondCopyData;
+}
+
+function getThirdCopy(secondCopyData) {
+    const thirdCopyData = {};
+    for (let obj of secondCopyData) {
+        if (!thirdCopyData[obj.symbol]) {
+            thirdCopyData[obj.symbol] = [];
+        }
+        thirdCopyData[obj.symbol].push({ acq: obj.secAcq, val: obj.secVal, acquisitionFromDate: obj.acqfromDt, acquisitionToDate: obj.acqtoDt });
+    }
+    return thirdCopyData;
+}
+
+function getFourthCopy(thirdCopyData) {
+    const fourthCopyData = [];
+    const keys = Object.keys(thirdCopyData);
+    for (let SYMBOL of keys) {
+        const arr = thirdCopyData[SYMBOL];
+        const VAL_SUM = arr.filter((obj) => (obj.val < 0)).map((obj) => obj.val).join(', ');
+        const ACQ = arr.reduce((acc, obj) => acc + parseInt(obj.acq), 0);
+        const VAL = arr.reduce((acc, obj) => acc + parseInt(obj.val), 0);
+        const PROMOTER_BUYING_PRICE = Math.floor(VAL / ACQ);
+        const CURRENT_PRICE = rateCopy[SYMBOL];
+        if (!CURRENT_PRICE) continue;
+        const DIFF = (((CURRENT_PRICE - PROMOTER_BUYING_PRICE) / PROMOTER_BUYING_PRICE) * 100).toFixed(2) + '%'
+        const WORTH = (CURRENT_PRICE < PROMOTER_BUYING_PRICE) ? 'STRONG BUY' : 'BUY';
+        // const TARGET1 = PROMOTER_BUYING_PRICE + Math.floor(PROMOTER_BUYING_PRICE * 0.6);
+        fourthCopyData.push({ SYMBOL, PROMOTER_BUYING_PRICE, CURRENT_PRICE, DIFF, WORTH, ACQ, VAL, VAL_SUM });
+    }
+    console.log(`fourthCopyData: `, fourthCopyData);
+    return fourthCopyData.filter((obj) => obj.VAL > 1000000);
+}
+
 module.exports = {
+    rateCopy,
     getURL,
     getDDMMYYYY,
     readCSV,
@@ -118,5 +172,9 @@ module.exports = {
     removeCSVFiles,
     validateIfFileExists,
     populateData,
-    sleep
+    sleep,
+    customSort,
+    getSecondCopy,
+    getThirdCopy,
+    getFourthCopy
 }
