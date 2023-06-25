@@ -1,5 +1,7 @@
 # nse-promoter-buying
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ankurksoni_nse-promoter-buying&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ankurksoni_nse-promoter-buying)
+
 A Node.js app to get the list of promoter buyers in recent (max 6 Months) times.
 
 ## Execution steps
