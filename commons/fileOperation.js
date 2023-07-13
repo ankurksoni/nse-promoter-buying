@@ -3,12 +3,12 @@ const jszip = require("jszip");
 const fs = require('fs');
 const moment = require('moment');
 
-const SUN = 0, SAT = 6;
+const SAT = 6, SUN = 0, MON = 1;
 
-const date = moment();
+let date = moment();
 let DAY, YEAR, MONTH;
 const numDay = date.day();
-date.subtract(isSunday() ? 2 : processSaturday(), 'day');
+date = date.subtract(isSunday() ? 2 : processDate(), 'day');
 DAY = date.format('DD');
 YEAR = date.year();
 MONTH = date.format('MMM').toUpperCase();
@@ -25,8 +25,17 @@ function isSaturday() {
     return SAT === numDay;
 }
 
-function processSaturday() {
-    return (isSaturday() ? 1 : 0);
+function isMonday() {
+    return MON === numDay
+}
+
+function processDate() {
+    if (isSunday()) {
+        return 2;
+    } else if (isMonday()) {
+        return 3;
+    }
+    return 1;
 }
 
 async function download() {
