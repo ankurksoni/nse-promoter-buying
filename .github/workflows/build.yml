@@ -20,12 +20,20 @@ jobs:
         with:
           node-version: '18.x'
 
-      - name: npm install, build
-        run: |
-          node --version
-          npm --version
-          npm install --ignore-scripts 
-          node index 1M
+      - name: PRINT NODE VERSION
+        run: node --version
 
-      - name: show folders in current directory
+      - name: PRINT NPM VERSION
+        run: npm --version
+
+      - name: INSTALLING NPM PKGs
+        run: npm install --ignore-scripts 
+
+      - name: PRINT CURR DIR CONTENT
+        run: ls -ltr
+
+      - name: REMOVING node_modules directory
+        run: rm -rf node_modules/
+
+      - name: PRINT CURR DIR CONTENT
         run: ls -ltr
