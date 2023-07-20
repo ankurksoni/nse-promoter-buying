@@ -1,0 +1,31 @@
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy Node.js app
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js version
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.x'
+
+      - name: npm install, build
+        run: |
+          node --version
+          npm --version
+          npm install --ignore-scripts 
+          node index 1M
+
+      - name: show folders in current directory
+        run: ls -ltr
