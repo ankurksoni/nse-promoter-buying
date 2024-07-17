@@ -13,13 +13,12 @@ async function execute() {
     await sleep();
     await validateIfFileExists(fileName);
 
-    const CSVData = await readCSV();
+    const CSVData = await readCSV(fileName);
     for (let obj of CSVData) {
-        if ('EQ' === obj.SERIES) rateCopy[obj.SYMBOL] = Math.floor(parseFloat(obj.CLOSE));
+        if (' EQ' === obj[' SERIES']) rateCopy[obj['SYMBOL']] = Math.floor(parseFloat(obj[' CLOSE_PRICE']));
     };
 
     const data = await populateData();
-
     delete data.acqNameList;
     // filter only market purchase AND Promoter group AND Promoter
     const firstCopyData = data.filter((obj) => personCategory.includes(obj.personCategory) && MODE_OF_ACQUISITION.includes(obj.acqMode));

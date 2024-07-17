@@ -4,7 +4,6 @@ const moment = require('moment');
 const papa = require('papaparse');
 const { exec } = require("child_process");
 const execFile = require('child_process').execFile;
-const { fileName } = require('./fileOperation');
 let axios;
 const duration = process.argv[2] || '1M';
 const config = require('../config/config.json');
@@ -44,8 +43,8 @@ function getDDMMYYYY(day) {
     return moment().subtract(day, "days").format('DD-MM-YYYY');
 }
 
-async function readCSV() {
-    const csvFile = fs.readFileSync(fileName.replace('.zip', ''));
+async function readCSV(fileName) {
+    const csvFile = fs.readFileSync(fileName);
     const csvData = csvFile.toString();
     return new Promise(resolve => {
         papa.parse(csvData, {
@@ -78,7 +77,7 @@ async function removeCSVFiles() {
 async function validateIfFileExists(fileName) {
     const isFileExists = await fileExists(fileName);
     if (!isFileExists) {
-        console.log('The file bhavcopy.csv does not exist.');
+        console.log(`The file ${fileName} does not exist.`);
         process.exit(1);
     }
 }
@@ -173,8 +172,7 @@ function getFourthCopy(thirdCopyData) {
         const WORTH = (CURRENT_PRICE < PROMOTER_BUYING_PRICE) ? 'STRONG BUY' : 'BUY';
         fourthCopyData.push({ SYMBOL, PROMOTER_BUYING_PRICE, CURRENT_PRICE, DIFF, WORTH, ACQ, VAL, VAL_SUM });
     }
-    console.log(`fourthCopyData: `, fourthCopyData);
-    return fourthCopyData.filter((obj) => obj.VAL > 1000000);
+    return fourthCopyData.filter((obj) => obj.VAL > 10000);
 }
 
 module.exports = {
