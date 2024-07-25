@@ -88,23 +88,23 @@ async function populateData() {
         const url = getURL();
         const cookie = config.cookie;
         axios = require('axios');
-        const response = await axios({
+        const response = await axios.request({
             method: 'get',
             maxBodyLength: Infinity,
             url,
             headers: {
-                'authority': 'www.nseindia.com',
                 'accept': '*/*',
                 'accept-language': 'en-US,en;q=0.9,mr;q=0.8,hi;q=0.7',
                 cookie,
+                'priority': 'u=1, i',
                 'referer': 'https://www.nseindia.com/companies-listing/corporate-filings-insider-trading',
-                'sec-ch-ua': '"Google Chrome";v="117", "Not;A=Brand";v="8", "Chromium";v="117"',
+                'sec-ch-ua': '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
                 'sec-ch-ua-mobile': '?0',
                 'sec-ch-ua-platform': '"Linux"',
                 'sec-fetch-dest': 'empty',
                 'sec-fetch-mode': 'cors',
                 'sec-fetch-site': 'same-origin',
-                'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'
+                'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
             }
         });
         data = response.data.data;
